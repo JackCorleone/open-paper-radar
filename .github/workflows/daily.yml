@@ -1,0 +1,81 @@
+name: 每日论文雷达
+
+on:
+  # 这是开源模板：默认只支持手动触发，避免 Fork 后没有配置密钥就自动运行失败。
+  # 部署自己的实例时，配置好 Settings → Secrets 后，取消下面两行的注释即可每天自动运行。
+  #  schedule:
+  #    - cron: "30 1 * * *"   # 北京时间 09:30
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只生成日报不推送（true/false）"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-radar
+  cancel-in-progress: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装 PDF 依赖
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk libpango-1.0-0 libpangoft2-1.0-0 > /dev/null
+          python -m pip install -q weasyprint markdown
+
+      - name: 运行论文雷达
+        env:
+          PYTHONPATH: src
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_BASE_URL: ${{ vars.DEEPSEEK_BASE_URL }}
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          SERVERCHAN_SENDKEY: ${{ secrets.SERVERCHAN_SENDKEY }}
+          WXPUSHER_APP_TOKEN: ${{ secrets.WXPUSHER_APP_TOKEN }}
+          WXPUSHER_UIDS: ${{ secrets.WXPUSHER_UIDS }}
+          WECOM_WEBHOOK: ${{ secrets.WECOM_WEBHOOK }}
+          NOTIFY_PROVIDER: ${{ vars.NOTIFY_PROVIDER }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python -m paper_radar run --dry-run
+          else
+            python -m paper_radar run
+          fi
+
+      - name: 保存日报与去重状态
+        run: |
+          mkdir -p reports data/state docs/reports
+          git config user.name "paper-radar-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports data/state docs/reports
+          if git diff --staged --quiet; then
+            echo "没有需要提交的变更"
+          else
+            git commit -m "chore: 更新 $(TZ=Asia/Shanghai date +%F) 论文日报"
+            git push
+          fi
+
+      - name: 失败告警
+        if: failure()
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+        run: |
+          if [ -n "$PUSHPLUS_TOKEN" ]; then
+            curl -s -X POST "https://www.pushplus.plus/send" \
+              -H "Content-Type: application/json" \
+              -d "{\"token\":\"$PUSHPLUS_TOKEN\",\"title\":\"论文雷达运行失败\",\"content\":\"GitHub Actions 运行失败，请查看 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\",\"template\":\"txt\"}"
+          fi

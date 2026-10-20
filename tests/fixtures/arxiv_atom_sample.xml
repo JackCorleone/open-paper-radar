@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <link href="http://arxiv.org/api/query?search_query=cat:quant-ph" rel="self" type="application/atom+xml"/>
+  <title type="html">ArXiv Query: search_query=cat:quant-ph</title>
+  <id>http://arxiv.org/api/query?search_query=cat:quant-ph</id>
+  <updated>2026-10-19T00:00:00-04:00</updated>
+  <opensearch:totalResults xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">134</opensearch:totalResults>
+  <entry>
+    <id>http://arxiv.org/abs/2610.22476v1</id>
+    <updated>2026-10-19T17:30:00Z</updated>
+    <published>2026-10-19T17:30:00Z</published>
+    <title>Typical Superpositions are Magical</title>
+    <summary>  The non-stabilizerness, or "magic", of a quantum state is a common metric
+for the hardness of simulation on a classical computer. We show that typical
+superpositions of stabilizer states are magical.
+</summary>
+    <author><name>Joshuah T. Heath</name></author>
+    <author><name>Andrew Urilyon</name></author>
+    <author><name>Damien Quinn</name></author>
+    <author><name>Graham Kells</name></author>
+    <arxiv:primary_category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.22111v2</id>
+    <updated>2026-10-19T15:10:00Z</updated>
+    <published>2026-10-18T15:10:00Z</published>
+    <title>Quantum Reservoir Computing with Dissipative Spin Networks</title>
+    <summary>  We study quantum reservoir computing using dissipative spin networks and
+show that the fading memory property survives in the presence of noise.
+</summary>
+    <author><name>Wei Chen</name></author>
+    <author><name>Maria Garcia</name></author>
+    <arxiv:primary_category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.19987v1</id>
+    <updated>2026-10-17T09:00:00Z</updated>
+    <published>2026-10-17T09:00:00Z</published>
+    <title>Learning Temporal Correlations with Quantum Extreme Learning Machines</title>
+    <summary>  Quantum extreme learning machines are trained on temporal correlation
+functions of a driven spin chain.
+</summary>
+    <author><name>Anna Muller</name></author>
+    <arxiv:primary_category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2401.00001v1</id>
+    <updated>2024-01-01T09:00:00Z</updated>
+    <published>2024-01-01T09:00:00Z</published>
+    <title>An Old Paper That Should Be Filtered Out</title>
+    <summary>Old.</summary>
+    <author><name>Old Author</name></author>
+    <arxiv:primary_category term="quant-ph" scheme="http://arxiv.org/schemas/atom"/>
+  </entry>
+</feed>

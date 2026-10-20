@@ -1,0 +1,220 @@
+{
+  "_comment": "论文雷达配置。修改检索方向只需要改这个文件。日期占位符 {today}/{date_minus_N} 会在运行时替换。",
+  "timezone": "Asia/Shanghai",
+  "focus": {
+    "_comment": "研究方向描述，会直接进入 LLM 打分 prompt。改方向时优先改这里。",
+    "description": "两个并重的主线。其一是量子储备池计算（quantum reservoir computing, QRC）与量子机器学习：用近期量子硬件做时序学习、储备池的记忆容量与泛化、量子系统作为非线性动力学的表达力、QRC 与经典 reservoir computing 的对比。其二是量子算法，重点是近最优量子算法（near-optimal quantum algorithms）：查询复杂度或时间复杂度达到/接近已知下界的工作、量子查询复杂度与下界证明、严格量化的量子优势；以及其他值得关注的量子算法任务，包括量子模拟（Hamiltonian simulation）、量子搜索与幅度放大、量子奇异值变换（QSVT）、量子线性代数、量子优化、量子采样、量子行走、量子态制备与酉算子合成。特别关注复杂度最优性与实际可实现性之间的权衡。",
+    "must_read_hint": "直接研究 QRC / 量子储备池 / 量子 echo state / 量子 extreme learning machine；或研究近最优量子算法、量子查询复杂度与下界、量子算法复杂度最优性；或给出可复用的量子算法框架（QSVT、Hamiltonian simulation、amplitude amplification 等）的论文。",
+    "deprioritize": "纯综述、纯硬件平台介绍、与量子信息无关的经典机器学习工作、只在经典算法上做微小改进的论文。"
+  },
+  "directions": [
+    {
+      "name": "QRC",
+      "any": [
+        "quantum reservoir",
+        "reservoir computing",
+        "reservoir computer",
+        "quantum extreme learning",
+        "quantum echo state",
+        "spin reservoir",
+        "quantum machine learning",
+        "quantum neural"
+      ]
+    },
+    {
+      "name": "量子算法",
+      "any": [
+        "quantum algorithm",
+        "hamiltonian simulation",
+        "amplitude amplification",
+        "quantum singular value",
+        "qsvt",
+        "quantum search",
+        "quantum linear algebra",
+        "quantum state preparation",
+        "unitary synthesis",
+        "quantum walk",
+        "quantum sampling",
+        "quantum optimization",
+        "quantum simulation",
+        "quantum query complexity",
+        "query complexity",
+        "quantum lower bound",
+        "near-optimal",
+        "quantum speedup",
+        "quantum advantage",
+        "quantum phase estimation",
+        "quantum amplitude estimation",
+        "quantum chemistry",
+        "quantum factoring",
+        "quantum cryptograph",
+        "grover"
+      ]
+    }
+  ],
+  "report": {
+    "title": "量子论文雷达",
+    "subtitle": "QRC · 量子算法（近最优优先）· quant-ph 每日精选",
+    "max_items": 16,
+    "scirate_top_n": 10
+  },
+  "scirate": {
+    "enabled": true,
+    "feeds": [
+      "quant-ph"
+    ],
+    "_comment": "默认列表按 scites 降序，页面顺序即排名。实测直连、浏览器、DeepSeek Fetch 三条路都被 Cloudflare 拦，use_deepseek_fetch 默认关闭以避免每次运行白等 2 分钟；若你的网络能访问 Scirate，直连会自动生效。",
+    "timeout_seconds": 30,
+    "use_deepseek_fetch": false
+  },
+  "arxiv": {
+    "enabled": true,
+    "categories": [
+      "quant-ph"
+    ],
+    "max_results": 200,
+    "lookback_hours": 72,
+    "_comment": "arXiv 官方 API 优先，被限流时自动降级到列表页 HTML。lookback_hours 用于过滤过旧论文。量子算法论文绝大多数 cross-list 到 quant-ph，保持单分类即可。"
+  },
+  "search": {
+    "enabled": true,
+    "_comment": "DeepSeek Search API 用于发现 arXiv 之外的信号（博客、会议、GitHub、OpenReview）。after: 语法限制时间窗。",
+    "queries": [
+      {
+        "name": "QRC 核心",
+        "query": "\"quantum reservoir computing\" after:{date_minus_3}",
+        "count": 10
+      },
+      {
+        "name": "reservoir + quantum",
+        "query": "\"reservoir computing\" quantum after:{date_minus_3}",
+        "count": 10
+      },
+      {
+        "name": "量子机器学习新进展",
+        "query": "\"quantum machine learning\" new results after:{date_minus_2}",
+        "count": 10
+      },
+      {
+        "name": "QRC arXiv 交叉确认",
+        "query": "site:arxiv.org \"quantum reservoir\" OR \"reservoir computing\" after:{date_minus_7}",
+        "count": 10
+      },
+      {
+        "name": "近最优量子算法",
+        "query": "\"near-optimal quantum algorithm\" after:{date_minus_5}",
+        "count": 10
+      },
+      {
+        "name": "量子查询复杂度与下界",
+        "query": "quantum query complexity lower bound after:{date_minus_5}",
+        "count": 10
+      },
+      {
+        "name": "量子算法新进展",
+        "query": "new quantum algorithm speedup after:{date_minus_3}",
+        "count": 10
+      }
+    ]
+  },
+  "keywords": {
+    "_comment": "priority_any 是最高优先级（近最优量子算法这类明确关注点，只放高特异性词，避免 quantum advantage 这种宣传性热词）；core_any 是具体研究方向/算法任务；adjacent_any 是泛化邻近词，权重最低。",
+    "priority_any": [
+      "near-optimal quantum",
+      "near optimal quantum",
+      "optimal quantum algorithm",
+      "quantum query complexity",
+      "query complexity",
+      "quantum lower bound",
+      "query-optimal",
+      "time-optimal quantum",
+      "optimal quantum query",
+      "near-optimal",
+      "tight bound",
+      "matching lower bound"
+    ],
+    "core_any": [
+      "quantum reservoir",
+      "reservoir computing",
+      "reservoir computer",
+      "quantum extreme learning",
+      "quantum echo state",
+      "quantum reserve",
+      "spin reservoir",
+      "hamiltonian simulation",
+      "amplitude amplification",
+      "quantum singular value",
+      "qsvt",
+      "quantum search",
+      "quantum linear algebra",
+      "quantum state preparation",
+      "unitary synthesis",
+      "quantum walk",
+      "quantum sampling",
+      "quantum optimization",
+      "quantum simulation",
+      "quantum linear system",
+      "quantum differential equation",
+      "quantum eigenvalue",
+      "quantum factoring",
+      "quantum cryptograph",
+      "quantum chemistry",
+      "quantum amplitude estimation",
+      "quantum phase estimation",
+      "quantum compiling"
+    ],
+    "adjacent_any": [
+      "quantum machine learning",
+      "quantum neural",
+      "variational quantum",
+      "quantum dynamics",
+      "open quantum system",
+      "quantum information",
+      "entanglement",
+      "nisq",
+      "fault-tolerant quantum",
+      "quantum many-body",
+      "circuit synthesis",
+      "grover",
+      "quantum circuit",
+      "query model",
+      "quantum algorithm",
+      "quantum speedup",
+      "quantum advantage"
+    ],
+    "exclude_any": []
+  },
+  "deep_dive": {
+    "_comment": "按方向分配深度解读名额。方向名必须和 directions 里的 name 一致；某方向候选不足时用「未标方向但 LLM 分达标」的论文补位。",
+    "enabled": true,
+    "per_direction": {
+      "QRC": {
+        "top_n": 3,
+        "min_llm_score": 6.5
+      },
+      "量子算法": {
+        "top_n": 5,
+        "min_llm_score": 7.0
+      }
+    },
+    "max_fulltext_chars": 50000,
+    "max_tokens": 3200,
+    "timeout_seconds": 300
+  },
+  "llm": {
+    "enabled": true,
+    "model": "deepseek-chat",
+    "base_url": "https://api.deepseek.com",
+    "max_candidates": 30,
+    "batch_size": 8,
+    "timeout_seconds": 180,
+    "temperature": 0.2,
+    "_comment": "只对预筛后的候选做精读，控制成本。方向变宽后从 24 提到 30，多出来的成本可以忽略。"
+  },
+  "notify": {
+    "provider": "auto",
+    "_comment": "auto 会按 PUSHPLUS_TOKEN / SERVERCHAN_SENDKEY / WXPUSHER_APP_TOKEN / WECOM_WEBHOOK / SMTP_* 的可用性自动选择。",
+    "max_items_in_message": 14,
+    "include_reason": true
+  }
+}

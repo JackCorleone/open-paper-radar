@@ -1,0 +1,120 @@
+【量子论文雷达】10-20 周二
+
+🔥 Scirate 热榜
+1. The Fundamental Memory Ceiling of Noisy Quantum Reservoirs（⬆14） 📖
+   💡 给出噪声下量子储备池记忆容量的理论上界，并给出达到上界的条件。
+   https://arxiv.org/abs/2610.26228
+2. Physics-anchored residual quantum neural networks for cloud-cover parameterization（⬆9） 📖
+   💡 把物理约束嵌入残差量子神经网络，用于云量参数化。
+   https://arxiv.org/abs/2610.26279
+3. Supervised Learning with Quantum Hamiltonian Embeddings（⬆7） 📖
+   💡 用量子哈密顿量嵌入做监督学习，给出表达力与训练成本的分析。
+   https://arxiv.org/abs/2610.26833
+4. Exact Quantum Query Complexity of the Five-Bit Symmetric Boolean Function（⬆6） 📖
+   💡 紧确界结果，证明三次查询不可能，将精确复杂度确定为 4。
+   https://arxiv.org/abs/2610.24518
+5. Quantum algorithms for optimal control: large-scale finite-horizon linear-quadratic regulation（⬆5） 📖
+   💡 把量子线性系统算法用于最优控制，给出端到端复杂度与经典 LQR 的对比。
+   https://arxiv.org/abs/2610.26843
+6. Efficient Quantum Algorithm for Mixed-State Quantum Geometry（⬆4） 📖
+   💡 用量子相位估计加速混合态量子几何张量估计，给出精度与查询复杂度的权衡。
+   https://arxiv.org/abs/2610.24686
+7. Measurement-efficient energy estimator for quantum chemistry of photodynamic materials（⬆3） 📖
+   💡 降低量子化学能量估计的测量开销，在光动力材料上做了验证。
+   https://arxiv.org/abs/2610.26689
+8. Higher-order Parity Constraints for Quantum Approximate Optimization（⬆2） 📖
+   💡 在 QAOA 中加入高阶奇偶约束，小规模数值上改善近似比。
+   https://arxiv.org/abs/2610.26381
+
+📖 重点论文深度解读 8 篇
+【QRC】
+1. 含噪量子储备池的记忆容量上限
+   原文：The Fundamental Memory Ceiling of Noisy Quantum Reservoirs
+   [QRC] · AI 8.4/10
+   ▸ 解决：量子储备池的短期记忆容量在噪声下如何衰减？此前缺少理论上界。
+   ▸ 方法：① **记忆容量上界的推导**：把储备池的 fading memory 性质与噪声通道的混合时间联系起来，得到容量上界。
+
+② **数值验证**：在自旋链储备池上验证上界的紧致性。
+   ▸ 结果：① 噪声强度与容量呈反比关系，给出可检验的 scaling；
+② 局限：上界对特定噪声模型成立，非马尔可夫噪声待检验。
+   🔗 https://arxiv.org/abs/2610.26228
+2. 物理约束的残差量子神经网络用于云量参数化
+   原文：Physics-anchored residual quantum neural networks for cloud-cover parameterizat…
+   [QRC] · AI 7.2/10
+   ▸ 解决：气候模式中的云量参数化难以用经典模型拟合。
+   ▸ 方法：① **物理锚定**：把辐射传输的守恒约束嵌入残差连接。
+
+② **量子线路设计**：用数据重上传编码输入。
+   ▸ 结果：① 在再分析数据上误差低于纯经典基线；
+② 局限：仅在离线数据上验证。
+   🔗 https://arxiv.org/abs/2610.26279
+3. 量子哈密顿量嵌入的监督学习
+   原文：Supervised Learning with Quantum Hamiltonian Embeddings
+   [QRC] · AI 7.0/10
+   ▸ 解决：量子特征映射如何影响监督学习的表达力？
+   ▸ 方法：① **哈密顿量嵌入**：把数据编码为哈密顿量的参数，演化产生特征。
+
+② **表达力分析**：给出嵌入方式与可表示函数类的关系。
+   ▸ 结果：① 在合成数据上优于角度编码；
+② 局限：训练成本随体系增大。
+   🔗 https://arxiv.org/abs/2610.26833
+【量子算法】
+1. 五比特对称布尔函数的精确量子查询复杂度
+   原文：Exact Quantum Query Complexity of the Five-Bit Symmetric Boolean Function
+   [量子算法] · AI 9.1/10
+   ▸ 解决：精确量子查询复杂度 $Q_E(f)$ 要求算法在所有输入上以概率 1 正确。对 $f=\text{EXACT}^{5}_{3,4}$，此前只有数值证据指向「三次查询可能够用」，但…
+   ▸ 方法：① **Fourier–Gram 层分解**：把任意三查询算法按层展开，每一层的振幅用该层所取低阶 Fourier 系数的 Gram 矩阵描述，从而把「是否存在三查询精确算法」转化为关于半正定矩阵的可行性问题，而不是在指数大的算法空间里搜索。
+
+② **有理对偶证书**：构造固定的有理系数对偶证书，对上述半正定可行性给出矛盾。证书固定、可显式验证，不依赖数值求解，因此结论严格——这与仅靠 SDP 数值解得到的证据有本质区别。
+
+③ **SOS 表示处理近…
+   ▸ 结果：① **主结果**：$Q_E(\text{EXACT}^{5}_{3,4}) = 4$，三次查询无论怎么设计都不可能零误差，四次查询足够，终结了一个此前只有数值证据的开放问题。
+
+② **方法论意义**：Fourier–Gram 逐层分解 + 有理对偶证书是一套可复用框架，适用于其他对称函数或低阶 Fourier 结构明显的函数。
+
+③…
+   🔗 https://arxiv.org/abs/2610.24518
+2. 量子最优控制：大规模有限时域线性二次调节
+   原文：Quantum algorithms for optimal control: large-scale finite-horizon linear-quadr…
+   [量子算法] · AI 8.0/10
+   ▸ 解决：经典 LQR 在状态维度大时计算成本高；能否用量子线性系统算法加速？
+   ▸ 方法：① **量子线性系统求解**：把 Riccati 方程离散化后转化为线性方程组，用量子线性系统算法求解，给出状态维度与精度依赖的复杂度上界。
+
+② **与经典 LQR 对照**：在同一问题族上与经典算法比较端到端复杂度，明确量子优势成立的条件。
+   ▸ 结果：① 在精度与维度的特定区间内给出多项式加速；
+② 局限：依赖量子线性系统算法的条件数假设，需要高效的数据输入模型。
+   🔗 https://arxiv.org/abs/2610.26843
+3. 混合态量子几何张量的高效量子算法
+   原文：Efficient Quantum Algorithm for Mixed-State Quantum Geometry
+   [量子算法] · AI 7.6/10
+   ▸ 解决：混合态量子几何张量（量子度规与 Berry 曲率）的经典估计需要大量测量。
+   ▸ 方法：① **量子相位估计**：把几何张量分量写成可观测量的期望，用相位估计与 Hadamard 测试组合估计。
+
+② **测量复用**：设计共享同一组测量的估计方案，降低总采样次数。
+   ▸ 结果：① 给出关于精度 $\epsilon$ 的采样复杂度上界，优于逐项估计；
+② 局限：在含噪中等规模设备上的常数开销尚未评估。
+   🔗 https://arxiv.org/abs/2610.24686
+4. 光动力材料量子化学的能量估计高效测量方案
+   原文：Measurement-efficient energy estimator for quantum chemistry of photodynamic ma…
+   [量子算法] · AI 7.3/10
+   ▸ 解决：量子化学能量估计中测量开销是主要瓶颈。
+   ▸ 方法：① **分组测量**：利用哈密顿量的对易结构把可观测量分组，减少所需测量次数。
+
+② **误差界**：给出分组方案下的方差与偏差界。
+   ▸ 结果：① 在光动力材料分子上把测量次数降到基线的约三分之一；
+② 局限：仅在小分子上验证。
+   🔗 https://arxiv.org/abs/2610.26689
+5. QAOA 的高阶奇偶约束
+   原文：Higher-order Parity Constraints for Quantum Approximate Optimization
+   [量子算法] · AI 7.0/10
+   ▸ 解决：标准 QAOA 在带约束的组合优化上需要惩罚项，影响解质量。
+   ▸ 方法：① **高阶奇偶约束编码**：把约束直接编码为高阶奇偶项，避免惩罚系数调参。
+
+② **小规模数值验证**：在约束优化实例上与标准 QAOA 比较近似比。
+   ▸ 结果：① 小规模实例上近似比优于标准 QAOA；
+② 局限：高阶项的线路实现成本随阶数增长。
+   🔗 https://arxiv.org/abs/2610.26381
+
+本次扫描 109 篇，深度解读 8 篇（QRC 3 + 量子算法 5）
+
+—— paper-radar 自动生成
