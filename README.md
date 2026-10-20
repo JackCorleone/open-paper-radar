@@ -1,8 +1,5 @@
 # 量子论文雷达（paper-radar）
 
-> 这是 paper-radar 的**开源模板仓库**。部署者的私人实例每天生成的 PDF 日报托管在本仓库的 `docs/reports/` 下，
-> 通过 GitHub Pages 提供下载。代码与配置可直接复用，密钥请自行通过 `Settings → Secrets` 配置，不要写进仓库。
-
 每天早上把 **Scirate 量子热榜**、**arXiv quant-ph 新论文**、**DeepSeek 搜索** 三个来源汇总，用 DeepSeek 模型逐篇精读打分；对最值得读的论文（默认 **QRC 3 篇 + 量子算法 5 篇**）**抓 arXiv 全文**，生成「问题 / 方法 / 结果」三段式中文简报（含作者机构、摘要翻译、公式），最后推到**微信**并把完整版存进仓库。
 
 > 面向两个并重方向：**量子储备池计算（QRC）/ 量子机器学习**，以及**量子算法**（重点是近最优量子算法 near-optimal quantum algorithms，以及其他值得关注的量子算法任务：量子模拟、量子搜索、QSVT、量子线性代数、量子优化、量子行走等）。改 `config/topics.json` 就能换方向。
@@ -68,6 +65,32 @@ $Q_E(\text{EXACT}^{5}_{3,4}) = 4$，终结了一个此前只有数值证据的�
 - **公式转 Unicode**：`$\mathcal{D}_q^{\otimes n}$` → `D_q^(⊗ n)`、`$O(\sqrt{N})$` → `O(√N)`，保证手机上可读
 
 完整版（含 LaTeX 公式、作者机构表格）仍然保存在仓库 `reports/` 里。
+
+## 仓库拆分：私有运行 + 开源模板
+
+本项目采用两个仓库：
+
+| 仓库 | 可见性 | 作用 |
+| --- | --- | --- |
+| `paper-radar` | Private | 日常运行：代码、每日日报 Markdown、去重状态、PDF 备份 |
+| `open-paper-radar` | Public | 开源模板（代码 + 示例数据），同时托管每日 PDF 日报，通过 GitHub Pages 提供下载 |
+
+**为什么拆开**：GitHub 免费账号的 private 仓库不支持 Pages，而微信推送需要 PDF 下载链接。折中方案是
+PDF 生成在私有仓库、同步到公开仓库托管。每日 PDF 链接形如：
+
+```
+https://<你的用户名>.github.io/open-paper-radar/reports/YYYY-MM-DD.pdf
+```
+
+**需要额外配置一个 Secret**：`PUBLIC_REPO_TOKEN`，用于把 PDF 推送到公开仓库。创建方式：
+GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → 新建，
+只授权 `open-paper-radar` 这一个仓库的 `Contents: Read and write` 权限，
+
+```bash
+gh secret set PUBLIC_REPO_TOKEN -b "github_pat_xxx" -R <你的用户名>/paper-radar
+```
+
+没有配置这个 Secret 时，PDF 仍会生成但只留在私有仓库，微信推送里不会显示下载链接。
 
 ## 一、架构
 
@@ -264,30 +287,176 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 | `llm.batch_size` | 每次请求评估几篇，默认 8 |
 | `notify.provider` | 推送渠道；环境变量 `NOTIFY_PROVIDER` 会覆盖它 |
 
-### 调整关注方向
+### 修改搜索主题或关键词
 
-两个方向都由 `focus` + `keywords` + `search` 三处共同控制，按需改：
+> 只需要改 `config/topics.json` 一个文件，改完 `git push`，下次定时运行自动生效。
+> 本地验证：`python3 scripts/run.py --dry-run`（不推送、不写状态）。
 
-- 想更偏量子算法 → 把 `report.subtitle` 和 `focus.description` 里的 QRC 部分弱化，`keywords.priority_any` 多加近最优相关表达
-- 想换到完全不同的领域（比如遥感）→ 改 `focus.description`、`keywords.priority_any/core_any/adjacent_any`、`search.queries`、`directions`，例如：
+#### 1. 四个要一起改的地方
+
+改方向不是只改关键词，四处联动才能生效：
+
+| 配置位置 | 负责什么 | 只改关键词不改它的后果 |
+| --- | --- | --- |
+| `focus.description` | 告诉 LLM「我在关注什么」，直接拼进打分 prompt | 规则预筛选出了新方向的论文，LLM 仍按旧标准打分 |
+| `keywords.priority_any / core_any / adjacent_any` | 规则预筛，决定哪些论文能进 LLM 精读（每天只送 30 篇） | 新方向论文在预筛阶段就被刷掉，后面全看不到 |
+| `directions` | 日报里的方向标签、深度解读的分组 | 论文没有方向标签，不会进入深度解读配额 |
+| `search.queries` | DeepSeek 联网搜索，负责发现 arXiv 之外的内容 | 只能靠 arXiv 分类兜底，漏掉期刊/博客/会议内容 |
+
+如果还要做深度解读，再加一处：`deep_dive.per_direction` 里给新方向分配名额。
+
+#### 2. 三层关键词怎么分工
+
+`relevance_score()` 会扫标题+摘要（转小写），分三档加权：
+
+| 层级 | 权重 | 放什么 | 例子 |
+| --- | --- | --- | --- |
+| `priority_any` | 最高（命中即 3 分起） | 你**最想盯死**的高特异性表达 | `quantum query complexity`、`near-optimal quantum`、`matching lower bound` |
+| `core_any` | 中（2 分起） | 具体研究方向 / 算法任务名 | `quantum reservoir`、`hamiltonian simulation`、`quantum optimization` |
+| `adjacent_any` | 低（每个 0.35 分，封顶 1.2） | 宽泛邻近词，用来捞边缘相关 | `quantum information`、`entanglement`、`quantum algorithm` |
+
+**选词原则**：
+
+- 关键词写**英文小写**（论文标题摘要都是英文；匹配时会 `lower()`，所以配置里写小写最直观）
+- `priority_any` 只放**高特异性**词。反例：`quantum advantage`、`quantum speedup` 这种宣传性热词几乎每篇都提，放进 priority 会把「云量参数化的量子神经网络」这类论文顶到第一（这是实测踩过的坑）
+- 宁可 `core_any` 写多条具体任务词，也不要把一个泛词放到 priority
+
+#### 3. 场景 A：微调现有方向的关键词
+
+比如量子算法方向想多盯「量子纠错」（片段示例，`...` 表示保留原有词条）：
 
 ```json
-"focus": { "description": "SAR 遥感、土壤湿度反演、变化检测、地球观测基础模型" },
 "keywords": {
-  "priority_any": ["soil moisture retrieval"],
-  "core_any": ["soil moisture", "synthetic aperture radar", "change detection"],
-  "adjacent_any": ["remote sensing", "InSAR", "radar backscatter", "earth observation"]
-},
-"directions": [
-  {"name": "遥感", "any": ["remote sensing", "SAR", "soil moisture"]}
-],
-"search": {
-  "queries": [
-    {"name": "土壤湿度", "query": "\"soil moisture\" SAR after:{date_minus_7}", "count": 10},
-    {"name": "变化检测", "query": "\"change detection\" remote sensing after:{date_minus_7}", "count": 10}
-  ]
+  "priority_any": [ ..., "quantum error correction", "surface code" ],
+  "core_any": [ ..., "fault-tolerant", "logical qubit", "syndrome extraction" ],
+  "adjacent_any": [ ... ]
 }
 ```
+
+改完跑一次 dry-run，日志里看 `规则预筛：N 篇候选进入 LLM 精读`，再打开 `reports/日期.md` 检查有没有抓到目标论文。
+
+#### 4. 场景 B：新增一个关注方向（以「量子纠错」为例）
+
+四处联动改（片段示例，`...` 表示保留原有配置）：
+
+```json
+{
+  "focus": {
+    "description": "（在原有描述末尾追加）此外关注量子纠错：表面码、逻辑量子比特、容错阈值、错误缓解与纠错码设计。"
+  },
+  "directions": [
+    { "name": "QRC", "any": ["quantum reservoir", "reservoir computing"] },
+    { "name": "量子算法", "any": ["quantum algorithm", "query complexity"] },
+    { "name": "量子纠错", "any": ["quantum error correction", "surface code", "logical qubit", "fault-tolerant"] }
+  ],
+  "keywords": {
+    "priority_any": [ ..., "quantum error correction code" ],
+    "core_any": [ ..., "surface code", "logical qubit", "syndrome", "decoder" ],
+    "adjacent_any": [ ..., "error mitigation", "noise characterization" ]
+  },
+  "search": {
+    "queries": [
+      { "name": "量子纠错", "query": "\"quantum error correction\" surface code after:{date_minus_5}", "count": 10 }
+    ]
+  },
+  "deep_dive": {
+    "per_direction": {
+      "QRC": { "top_n": 3, "min_llm_score": 6.5 },
+      "量子算法": { "top_n": 5, "min_llm_score": 7.0 },
+      "量子纠错": { "top_n": 3, "min_llm_score": 7.0 }
+    }
+  }
+}
+```
+
+注意三点：
+
+- `directions[].name` 必须和 `deep_dive.per_direction` 的 key **完全一致**（含中文/英文），否则配额分配不到
+- 新方向的论文要能被 `directions[].any` 命中，才会打上标签
+- 深度解读总篇数会变成 3+5+3=11 篇，成本会上升，留意 `五、成本`
+
+#### 5. 场景 C：换成完全不同的领域（以遥感为例）
+
+```json
+{
+  "focus": { "description": "SAR 遥感、土壤湿度反演、变化检测、地球观测基础模型" },
+  "directions": [
+    { "name": "遥感", "any": ["remote sensing", "SAR", "soil moisture", "change detection"] }
+  ],
+  "keywords": {
+    "priority_any": ["soil moisture retrieval"],
+    "core_any": ["soil moisture", "synthetic aperture radar", "change detection", "InSAR"],
+    "adjacent_any": ["remote sensing", "radar backscatter", "earth observation"]
+  },
+  "arxiv": { "categories": ["physics.geo-ph", "cs.CV"] },
+  "search": {
+    "queries": [
+      { "name": "土壤湿度", "query": "\"soil moisture\" SAR after:{date_minus_7}", "count": 10 },
+      { "name": "变化检测", "query": "\"change detection\" remote sensing after:{date_minus_7}", "count": 10 }
+    ]
+  },
+  "deep_dive": { "per_direction": { "遥感": { "top_n": 5, "min_llm_score": 7.0 } } }
+}
+```
+
+同时记得改 `report.subtitle`（日报副标题）和 `scirate.feeds`（如果不再用 `quant-ph`）。
+
+#### 6. DeepSeek 搜索查询语法
+
+`query` 支持官方搜索语法，可组合使用：
+
+| 语法 | 示例 | 作用 |
+| --- | --- | --- |
+| `site:` | `quantum computing site:arxiv.org` | 限定站点；多个用 `site:a OR site:b` |
+| `-site:` | `DeepSeek -site:example.com` | 排除站点 |
+| `-词` | `reservoir -advertisement` | 排除包含该词的页面 |
+| `"..."` | `"quantum reservoir computing"` | 精确短语匹配（长尾关键词必用） |
+| `-"..."` | `- "release notes"` | 排除短语 |
+| `lang:` | `lang:en` 或 `lang:zh,en` | 限定语言 |
+| `after:` | `after:2026-10-15` | 限定发布日期之后 |
+| `before:` | `before:2026-10-20` | 限定发布日期之前 |
+
+日期占位符（运行时自动替换）：
+
+| 占位符 | 替换成 |
+| --- | --- |
+| `{today}` | 运行当天 |
+| `{yesterday}` | 昨天 |
+| `{date_minus_N}` | N 天前（N 可写 0-30） |
+
+其他限制：
+
+- `query` 长度 **1~128 个 Unicode 字符**（超了会自动截断并告警）
+- `count` 是返回条数（1~50），**不影响计费**（按请求次数计费）
+- 每个查询都是一次计费请求，`search.queries` 条数直接决定每天成本
+
+#### 7. 改完怎么验证
+
+```bash
+# 1. 先确认数据源和密钥都正常
+python3 scripts/check.py
+
+# 2. 跑完整流程但不推送（推荐加 --no-deep-dive 先快速验证抓取和排序）
+python3 scripts/run.py --dry-run --no-deep-dive
+
+# 3. 看终端日志里的关键行：
+#    规则预筛：N 篇候选进入 LLM 精读
+#    方向「量子纠错」深度解读候选不足：1/3 篇
+# 4. 打开 reports/2026-XX-XX.md 检查热榜和精选里有没有目标论文
+#    如果全是无关论文，说明关键词太泛（adjacent 权重过高）或 query 太宽
+```
+
+确认没问题后 `git push`，GitHub Actions 下次定时运行就会用新配置。
+
+#### 8. 常见坑
+
+| 现象 | 原因 | 处理 |
+| --- | --- | --- |
+| 新方向论文完全没出现 | 只改了 `focus` 或 `search`，没改 `keywords`，预筛阶段就被刷掉 | 三层关键词都要加 |
+| 热榜全是综述/新闻 | `priority_any` 放了泛词 | 换成高特异性词，泛词降级到 `adjacent_any` |
+| 深度解读数量不足 | `directions` 没给新方向打上标签 | 检查 `directions[].any` 的词是否能在标题/摘要里命中 |
+| 方向标签全是「其他」 | `directions[].name` 拼写和 `per_direction` 的 key 不一致 | 复制粘贴保证一致 |
+| 搜索结果一条都没有 | `after:` 时间窗太窄，或 `query` 里的短语加了引号但原文表述不同 | 放宽到 `{date_minus_7}`，去掉引号试试 |
 
 ---
 
