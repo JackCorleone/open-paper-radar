@@ -3,24 +3,11 @@
   "timezone": "Asia/Shanghai",
   "focus": {
     "_comment": "研究方向描述，会直接进入 LLM 打分 prompt。改方向时优先改这里。",
-    "description": "两个并重的主线。其一是量子储备池计算（quantum reservoir computing, QRC）与量子机器学习：用近期量子硬件做时序学习、储备池的记忆容量与泛化、量子系统作为非线性动力学的表达力、QRC 与经典 reservoir computing 的对比。其二是量子算法，重点是近最优量子算法（near-optimal quantum algorithms）：查询复杂度或时间复杂度达到/接近已知下界的工作、量子查询复杂度与下界证明、严格量化的量子优势；以及其他值得关注的量子算法任务，包括量子模拟（Hamiltonian simulation）、量子搜索与幅度放大、量子奇异值变换（QSVT）、量子线性代数、量子优化、量子采样、量子行走、量子态制备与酉算子合成。特别关注复杂度最优性与实际可实现性之间的权衡。",
-    "must_read_hint": "直接研究 QRC / 量子储备池 / 量子 echo state / 量子 extreme learning machine；或研究近最优量子算法、量子查询复杂度与下界、量子算法复杂度最优性；或给出可复用的量子算法框架（QSVT、Hamiltonian simulation、amplitude amplification 等）的论文。",
-    "deprioritize": "纯综述、纯硬件平台介绍、与量子信息无关的经典机器学习工作、只在经典算法上做微小改进的论文。"
+    "description": "三个并重的主线。其一是量子算法，重点是近最优量子算法（near-optimal quantum algorithms）：查询复杂度或时间复杂度达到/接近已知下界的工作、量子查询复杂度与下界证明、严格量化的量子优势；以及其他值得关注的量子算法任务，包括量子模拟（Hamiltonian simulation）、量子搜索与幅度放大、量子奇异值变换（QSVT）、量子线性代数、量子优化、量子采样、量子行走、量子态制备与酉算子合成。特别关注复杂度最优性与实际可实现性之间的权衡。其二是相干伊辛机（coherent Ising machine, CIM）：光学/光子相干伊辛机、伊辛模型求解、退火与组合优化、量子/经典混合优化、CIM 与量子退火/QAOA 的对比、实际可实现性与规模扩展。其三是量子注意力（quantum attention）：量子自注意力机制、量子 Transformer、量子注意力与量子神经网络、量子机器学习中的注意力模型、量子注意力在近期量子硬件上的实现与表达力/训练性。此处关注",
+    "must_read_hint": "直接研究近最优量子算法、量子查询复杂度与下界、量子算法复杂度最优性；或研究相干伊辛机/光学伊辛机、伊辛模型求解与组合优化；或研究量子注意力、量子自注意力、量子 Transformer、量子注意力机制与量子神经网络。",
+    "deprioritize": "纯综述、纯硬件平台介绍、与量子信息无关的经典机器学习/注意力/Transformer 工作、纯经典伊辛求解器或纯经典组合优化微改、只在经典算法上做微小改进的论文。"
   },
   "directions": [
-    {
-      "name": "QRC",
-      "any": [
-        "quantum reservoir",
-        "reservoir computing",
-        "reservoir computer",
-        "quantum extreme learning",
-        "quantum echo state",
-        "spin reservoir",
-        "quantum machine learning",
-        "quantum neural"
-      ]
-    },
     {
       "name": "量子算法",
       "any": [
@@ -50,11 +37,38 @@
         "quantum cryptograph",
         "grover"
       ]
+    },
+    {
+      "name": "相干伊辛机",
+      "any": [
+        "coherent ising machine",
+        "coherent ising",
+        "optical ising machine",
+        "photonic ising machine",
+        "ising machine",
+        "ising model",
+        "ising solver",
+        "combinatorial optimization",
+        "quantum annealing",
+        "qaoa"
+      ]
+    },
+    {
+      "name": "量子注意力",
+      "any": [
+        "quantum attention",
+        "quantum self-attention",
+        "quantum transformer",
+        "quantum attention mechanism",
+        "attention-based quantum",
+        "quantum neural network",
+        "quantum machine learning"
+      ]
     }
   ],
   "report": {
     "title": "量子论文雷达",
-    "subtitle": "QRC · 量子算法（近最优优先）· quant-ph 每日精选",
+    "subtitle": "量子算法（近最优优先）· 相干伊辛机 · 量子注意力 · quant-ph 每日精选",
     "max_items": 16,
     "scirate_top_n": 10
   },
@@ -81,26 +95,6 @@
     "_comment": "DeepSeek Search API 用于发现 arXiv 之外的信号（博客、会议、GitHub、OpenReview）。after: 语法限制时间窗。",
     "queries": [
       {
-        "name": "QRC 核心",
-        "query": "\"quantum reservoir computing\" after:{date_minus_3}",
-        "count": 10
-      },
-      {
-        "name": "reservoir + quantum",
-        "query": "\"reservoir computing\" quantum after:{date_minus_3}",
-        "count": 10
-      },
-      {
-        "name": "量子机器学习新进展",
-        "query": "\"quantum machine learning\" new results after:{date_minus_2}",
-        "count": 10
-      },
-      {
-        "name": "QRC arXiv 交叉确认",
-        "query": "site:arxiv.org \"quantum reservoir\" OR \"reservoir computing\" after:{date_minus_7}",
-        "count": 10
-      },
-      {
         "name": "近最优量子算法",
         "query": "\"near-optimal quantum algorithm\" after:{date_minus_5}",
         "count": 10
@@ -114,6 +108,26 @@
         "name": "量子算法新进展",
         "query": "new quantum algorithm speedup after:{date_minus_3}",
         "count": 10
+      },
+      {
+        "name": "相干伊辛机",
+        "query": "\"coherent Ising machine\" after:{date_minus_7}",
+        "count": 10
+      },
+      {
+        "name": "伊辛机组合优化",
+        "query": "\"Ising machine\" combinatorial optimization after:{date_minus_7}",
+        "count": 10
+      },
+      {
+        "name": "量子注意力",
+        "query": "\"quantum attention\" after:{date_minus_7}",
+        "count": 10
+      },
+      {
+        "name": "量子 Transformer",
+        "query": "\"quantum transformer\" OR \"quantum self-attention\" after:{date_minus_7}",
+        "count": 10
       }
     ]
   },
@@ -122,6 +136,7 @@
     "priority_any": [
       "near-optimal quantum",
       "near optimal quantum",
+      "near-optimal quantum algorithm",
       "optimal quantum algorithm",
       "quantum query complexity",
       "query complexity",
@@ -129,18 +144,17 @@
       "query-optimal",
       "time-optimal quantum",
       "optimal quantum query",
-      "near-optimal",
       "tight bound",
-      "matching lower bound"
+      "matching lower bound",
+      "coherent ising machine",
+      "coherent ising",
+      "optical ising machine",
+      "photonic ising machine",
+      "quantum attention",
+      "quantum self-attention",
+      "quantum transformer"
     ],
     "core_any": [
-      "quantum reservoir",
-      "reservoir computing",
-      "reservoir computer",
-      "quantum extreme learning",
-      "quantum echo state",
-      "quantum reserve",
-      "spin reservoir",
       "hamiltonian simulation",
       "amplitude amplification",
       "quantum singular value",
@@ -161,7 +175,16 @@
       "quantum chemistry",
       "quantum amplitude estimation",
       "quantum phase estimation",
-      "quantum compiling"
+      "quantum compiling",
+      "ising machine",
+      "ising model",
+      "ising solver",
+      "combinatorial optimization",
+      "quantum annealing",
+      "qaoa",
+      "quantum attention mechanism",
+      "attention-based quantum",
+      "quantum neural network"
     ],
     "adjacent_any": [
       "quantum machine learning",
@@ -180,7 +203,13 @@
       "query model",
       "quantum algorithm",
       "quantum speedup",
-      "quantum advantage"
+      "quantum advantage",
+      "photonic computing",
+      "optical computing",
+      "combinatorial optimization problem",
+      "transformer",
+      "attention mechanism",
+      "machine learning"
     ],
     "exclude_any": []
   },
@@ -188,13 +217,17 @@
     "_comment": "按方向分配深度解读名额。方向名必须和 directions 里的 name 一致；某方向候选不足时用「未标方向但 LLM 分达标」的论文补位。",
     "enabled": true,
     "per_direction": {
-      "QRC": {
-        "top_n": 3,
-        "min_llm_score": 6.5
-      },
       "量子算法": {
         "top_n": 5,
         "min_llm_score": 7.0
+      },
+      "相干伊辛机": {
+        "top_n": 3,
+        "min_llm_score": 7.0
+      },
+      "量子注意力": {
+        "top_n": 3,
+        "min_llm_score": 6.5
       }
     },
     "max_fulltext_chars": 50000,
