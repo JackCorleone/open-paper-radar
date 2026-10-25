@@ -3,8 +3,8 @@
   "timezone": "Asia/Shanghai",
   "focus": {
     "_comment": "研究方向描述，会直接进入 LLM 打分 prompt。改方向时优先改这里。",
-    "description": "三个并重的主线。其一是量子算法，重点是近最优量子算法（near-optimal quantum algorithms）：查询复杂度或时间复杂度达到/接近已知下界的工作、量子查询复杂度与下界证明、严格量化的量子优势；以及其他值得关注的量子算法任务，包括量子模拟（Hamiltonian simulation）、量子搜索与幅度放大、量子奇异值变换（QSVT）、量子线性代数、量子优化、量子采样、量子行走、量子态制备与酉算子合成。特别关注复杂度最优性与实际可实现性之间的权衡。其二是相干伊辛机（coherent Ising machine, CIM）：光学/光子相干伊辛机、伊辛模型求解、退火与组合优化、量子/经典混合优化、CIM 与量子退火/QAOA 的对比、实际可实现性与规模扩展。其三是量子注意力（quantum attention）：量子自注意力机制、量子 Transformer、量子注意力与量子神经网络、量子机器学习中的注意力模型、量子注意力在近期量子硬件上的实现与表达力/训练性。此处关注",
-    "must_read_hint": "直接研究近最优量子算法、量子查询复杂度与下界、量子算法复杂度最优性；或研究相干伊辛机/光学伊辛机、伊辛模型求解与组合优化；或研究量子注意力、量子自注意力、量子 Transformer、量子注意力机制与量子神经网络。",
+    "description": "三个并重的主线。其一是量子算法，重点是近最优量子算法（near-optimal quantum algorithms）：查询复杂度或时间复杂度达到/接近已知下界的工作、量子查询复杂度与下界证明、严格量化的量子优势；以及其他值得关注的量子算法任务，包括量子模拟（Hamiltonian simulation）、量子搜索与幅度放大、量子奇异值变换（QSVT）、量子线性代数、量子优化、量子采样、量子行走、量子态制备与酉算子合成。特别关注复杂度最优性与实际可实现性之间的权衡。其二是相干伊辛机（coherent Ising machine, CIM）：光学/光子相干伊辛机、伊辛模型求解、退火与组合优化、量子/经典混合优化、CIM 与量子退火/QAOA 的对比、实际可实现性与规模扩展；特别关注 CIM 的物理瓶颈与动力学控制（Langevin 动力学、混沌振幅控制、振幅异质性、DAC/ADC 瓶颈、非马尔可夫噪声）、公平基准与资源核算（Gset、BiqMac、与模拟分岔机等动力学基线的对比）。其三是量子注意力（quantum attention）：量子自注意力机制、量子 Transformer、量子注意力与量子神经网络、量子机器学习中的注意力模型、量子注意力在近期量子硬件上的实现与表达力/训练性；特别关注将注意力表述为 Ising 采样问题（Boltzmann attention、Ising attention）以及与 CIM 的结合。此处关注",
+    "must_read_hint": "直接研究近最优量子算法、量子查询复杂度与下界、量子算法复杂度最优性；或研究相干伊辛机/光学伊辛机、伊辛模型求解与组合优化、CIM 动力学瓶颈与基准对比；或研究量子注意力、量子自注意力、量子 Transformer、量子注意力机制与量子神经网络、Boltzmann attention/Ising attention。",
     "deprioritize": "纯综述、纯硬件平台介绍、与量子信息无关的经典机器学习/注意力/Transformer 工作、纯经典伊辛求解器或纯经典组合优化微改、只在经典算法上做微小改进的论文。"
   },
   "directions": [
@@ -50,7 +50,15 @@
         "ising solver",
         "combinatorial optimization",
         "quantum annealing",
-        "qaoa"
+        "qaoa",
+        "langevin dynamics",
+        "chaotic amplitude control",
+        "amplitude heterogeneity",
+        "dac adc bottleneck",
+        "non-markovian noise",
+        "simulated bifurcation",
+        "gset",
+        "biqmac"
       ]
     },
     {
@@ -128,6 +136,21 @@
         "name": "量子 Transformer",
         "query": "\"quantum transformer\" OR \"quantum self-attention\" after:{date_minus_7}",
         "count": 10
+      },
+      {
+        "name": "CIM 瓶颈与动力学",
+        "query": "\"coherent Ising machine\" (\"Langevin\" OR \"chaotic amplitude\" OR \"DAC\" OR \"bottleneck\") after:{date_minus_7}",
+        "count": 10
+      },
+      {
+        "name": "CIM 基准与对比",
+        "query": "\"Ising machine\" (\"Gset\" OR \"BiqMac\" OR \"simulated bifurcation\" OR benchmark) after:{date_minus_7}",
+        "count": 10
+      },
+      {
+        "name": "Ising + 注意力/QEC",
+        "query": "(\"Boltzmann attention\" OR \"Ising attention\" OR \"quantum error correction decoder\") (\"Ising machine\" OR \"coherent Ising\") after:{date_minus_7}",
+        "count": 10
       }
     ]
   },
@@ -152,7 +175,13 @@
       "photonic ising machine",
       "quantum attention",
       "quantum self-attention",
-      "quantum transformer"
+      "quantum transformer",
+      "chaotic amplitude control",
+      "amplitude heterogeneity",
+      "langevin dynamics",
+      "quantum error correction decoder",
+      "boltzmann attention",
+      "ising attention"
     ],
     "core_any": [
       "hamiltonian simulation",
@@ -184,7 +213,17 @@
       "qaoa",
       "quantum attention mechanism",
       "attention-based quantum",
-      "quantum neural network"
+      "quantum neural network",
+      "dac adc bottleneck",
+      "non-markovian noise",
+      "simulated bifurcation machine",
+      "gain-dissipative",
+      "gset",
+      "biqmac",
+      "surface code",
+      "syndrome decoding",
+      "quantum annealing multi-head attention",
+      "polarization symmetry breaking"
     ],
     "adjacent_any": [
       "quantum machine learning",
