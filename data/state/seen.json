@@ -1,7 +1,7 @@
 {
  "version": 1,
- "updated_at": "2026-10-25T12:06:37+00:00",
- "count": 87,
+ "updated_at": "2026-10-25T12:08:43+00:00",
+ "count": 89,
  "seen": {
   "arxiv:0001.7746": "2026-10-25",
   "arxiv:0743.38042": "2026-10-25",
@@ -10,6 +10,7 @@
   "arxiv:2507.16373": "2026-10-25",
   "arxiv:2512.13044": "2026-10-25",
   "arxiv:2609.37207": "2026-10-25",
+  "arxiv:2610.24518": "2026-10-25",
   "arxiv:2610.25657": "2026-10-25",
   "arxiv:2610.26573": "2026-10-25",
   "arxiv:2610.27362": "2026-10-25",
@@ -80,6 +81,7 @@
   "title:quantumalgorithmcutsmemoryneededforfutureeventpredictions": "2026-10-25",
   "title:quantumalgorithmspeedsupoptimisationatakeytransitionpoint": "2026-10-25",
   "title:quantumclassicalhybridmethodsforoptimizationlessonsfromclassicaldecomposition": "2026-10-25",
+  "title:quantumforrepresentationcircuitbasedattentionmechanismforhyperspectralfeaturelearning": "2026-10-25",
   "title:quantumquerycomplexityopenaibreaksthecubicbound": "2026-10-25",
   "title:researchersboundquantumalgorithmconvergencewithchannelproperty": "2026-10-25",
   "title:researchersproposearchitectureforparalleluniversallogic": "2026-10-25",
