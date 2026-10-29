@@ -507,6 +507,7 @@ Scirate 用 Cloudflare 的 managed challenge 保护。**实测结论：直连、
 2. PushPlus 免费版需要**先关注服务号**才能收到；
 3. token 是否填对、是否写在了 Secrets 而不是 Variables；
 4. 消息可能被微信折叠在「服务通知」里。
+5. daily.yml时间注释没叉掉
 
 ### 重复推送 / 漏推
 
