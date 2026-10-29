@@ -3,8 +3,8 @@ name: 每日论文雷达
 on:
   # 这是开源模板：默认只支持手动触发，避免 Fork 后没有配置密钥就自动运行失败。
   # 部署自己的实例时，配置好 Settings → Secrets 后，取消下面两行的注释即可每天自动运行。
-  #  schedule:
-  #    - cron: "30 1 * * *"   # 北京时间 09:30
+  schedule:
+      - cron: "30 1 * * *"   # 北京时间 09:30
   workflow_dispatch:
     inputs:
       dry_run:
